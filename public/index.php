@@ -14,7 +14,7 @@ method: POST
 */
 
 $app->post('/createuser', function(Request $request,Response $response){
-    if(haveEmptyParameters(array('email','password','name','school'))){
+    if(haveEmptyParameters(array('email','password','name','school'), $response)){
         $request_data = $request->getParsedBody();
 
         $email = $request_data['email'];
@@ -30,9 +30,36 @@ $app->post('/createuser', function(Request $request,Response $response){
 
         if($result == USER_CREATED){
 
+            $message = array();
+            $message['error'] = false;
+            $messsage['message'] = "User created successfully!";
+
+            $response->write(json_encode($message));
+
+            return $response->withHeader("Content-Type","application/json")
+            ->withStatus(201);
+
         }else if($result == USER_FAILURE) {
 
+            $message = array();
+            $message['error'] = false;
+            $messsage['message'] = "An error occured!";
+
+            $response->write(json_encode($message));
+
+            return $response->withHeader("Content-Type","application/json")
+            ->withStatus(422);
+
         }else if($result == USER_EXISTS) {
+
+            $message = array();
+            $message['error'] = false;
+            $messsage['message'] = "User already exists!";
+
+            $response->write(json_encode($message));
+
+            return $response->withHeader("Content-Type","application/json")
+            ->withStatus(201);
 
         }
     }
@@ -43,7 +70,7 @@ function haveEmptyParameters($required_params,$response){
     $error_params= '';
     $request_params = $_REQUEST;
 
-    foreach ($request_params as $param) {
+    foreach ($required_params as $param) {
         if(!isset($request_params[$param]) || strlen($request_params[$param])<= 0){
             $error = true;
             $error_params .= $param. ' ,';
