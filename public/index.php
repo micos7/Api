@@ -5,7 +5,11 @@ use \Psr\Http\Message\ResponseInterface as Response;
 require '../vendor/autoload.php';
 require '../includes/DbOperations.php';
 
-$app = new \Slim\App;
+$app = new \Slim\App([
+    'settings'=>[
+        'displayErrorDetails'=>true
+    ]
+]);
 
 /*
 endpoint: createuser
