@@ -65,6 +65,62 @@ $app->post('/createuser', function(Request $request,Response $response){
     }
 });
 
+$app->post('/userlogin', function(Request $request,Response $response){
+    if(!haveEmptyParameters(array('email','password'), $response)){
+
+        $request_data = $request->getParsedBody();
+
+        $email = $request_data['email'];
+        $password = $request_data['password'];
+
+        $db = new DbOperations;
+
+        $result = $db->userLogin($email, $password);
+
+        if($result == USER_AUTHENTHICATED){
+            $user = $db->getUserByEmail($email);
+            $response_data = array();
+
+            $response_data['error'] = false;
+            $response_data['message'] = "Login successful!";
+            $response_data['user'] = $user;
+
+            $response->write(json_encode($response_data));
+
+            return $response->withHeader("Content-Type","application/json")
+            ->withStatus(200);
+
+        }else if($result == USER_NOT_FOUND){
+
+            $response_data = array();
+
+            $response_data['error'] = true;
+            $response_data['message'] = "User not found!";
+
+            $response->write(json_encode($response_data));
+
+            return $response->withHeader("Content-Type","application/json")
+            ->withStatus(404);
+
+        }else if($result == USER_PASSWORD_DO_NOT_MATCH){
+            $response_data = array();
+
+            $response_data['error'] = true;
+            $response_data['message'] = "Password does not match!";
+
+            $response->write(json_encode($response_data));
+
+            return $response->withHeader("Content-Type","application/json")
+            ->withStatus(200);
+
+        }
+
+    }
+
+    return $response->withHeader("Content-Type","application/json")
+            ->withStatus(422);
+});
+
 function haveEmptyParameters($required_params,$response){
     $error = false;
     $error_params= '';
