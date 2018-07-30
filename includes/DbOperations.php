@@ -88,6 +88,20 @@ class DbOperations {
         return false;
     }
 
+    public function updatePassword($currentPassword, $newPassword, $email){
+        $hashed_password = getUsersPasswordByEmail($email);
+        if(password_verify($currentPassword, $hashed_password)){
+            $hash_password = password_hash($newPassword, PASSWORD_DEFAULT);
+            $stmt = $this->con->prepare("UPDATE users SET password =?  WHERE email = ?");
+            $stmt->bind_param("ss", $hash_password, $email);
+            if($stmt->execute())
+                return PASSWORD_CHANGED;
+            return PASSWORD_NOT_CHANGED;
+        }else{
+            return PASSWORD_DO_NOT_MATCH;
+        }
+    }
+
     private function isEmailExist($email){
         $stmt = $this->con->prepare("SELECT * FROM users WHERE email = ?");
         $stmt->bind_param("s",$email);
