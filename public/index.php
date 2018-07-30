@@ -18,7 +18,7 @@ method: POST
 */
 
 $app->post('/createuser', function(Request $request,Response $response){
-    if(haveEmptyParameters(array('email','password','name','school'), $response)){
+    if(haveEmptyParameters(array('email','password','name','school'), $request, $response)){
         $request_data = $request->getParsedBody();
 
         $email = $request_data['email'];
@@ -70,7 +70,7 @@ $app->post('/createuser', function(Request $request,Response $response){
 });
 
 $app->post('/userlogin', function(Request $request,Response $response){
-    if(!haveEmptyParameters(array('email','password'), $response)){
+    if(!haveEmptyParameters(array('email','password'), $request, $response)){
 
         $request_data = $request->getParsedBody();
 
@@ -185,9 +185,12 @@ $app->put('/updateuser/{id}', function(Request $request,Response $response, arra
     return $response->withHeader("Content-Type","application/json")
             ->withStatus(200);
 });
+
+
+function haveEmptyParameters($required_params, $request, $response){
     $error = false;
     $error_params= '';
-    $request_params = $_REQUEST;
+    $request_params = $request->getParsedBody();
 
     foreach ($required_params as $param) {
         if(!isset($request_params[$param]) || strlen($request_params[$param])<= 0){
