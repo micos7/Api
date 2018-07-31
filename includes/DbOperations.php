@@ -102,6 +102,14 @@ class DbOperations {
         }
     }
 
+    public function deleteUser($id){
+        $stmt = $this->con->prepare("DELETE FROM  users  WHERE id = ?");
+        $stmt->bind_param("i", $id);
+        if($stmt->execute())
+            return true;
+        return false;
+    }
+
     private function isEmailExist($email){
         $stmt = $this->con->prepare("SELECT * FROM users WHERE email = ?");
         $stmt->bind_param("s",$email);
