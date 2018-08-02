@@ -3,13 +3,13 @@ class DbOperations {
     private $con;
 
     function __construct(){
-        require_once dirname(__FILE__). "DbConnect.php";
+        require_once(dirname(__FILE__). "\DbConnect.php");
         $db = new DbConnect();
         $this->con = $db->connect();
     }
 
     public function createUser($email,$password,$name,$school){
-        if(!isEmailExist($email)){
+        if(!$this->isEmailExist($email)){
             $stmt = $this->con->prepare("INSERT INTO users(email,password,name,school) VALUES(?,?,?,?)");
             $stmt->bind_param("ssss",$email,$password,$name,$school);
             if($stmt->execute()){

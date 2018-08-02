@@ -30,13 +30,13 @@ $app->post('/createuser', function(Request $request,Response $response){
 
         $db = new DbOperations;
 
-        $result = $dn->createUser($email,$hash_password,$name,$school);
+        $result = $db->createUser($email,$hash_password,$name,$school);
 
         if($result == USER_CREATED){
 
             $message = array();
             $message['error'] = false;
-            $messsage['message'] = "User created successfully!";
+            $message['message'] = "User created successfully!";
 
             $response->write(json_encode($message));
 
@@ -46,8 +46,8 @@ $app->post('/createuser', function(Request $request,Response $response){
         }else if($result == USER_FAILURE) {
 
             $message = array();
-            $message['error'] = false;
-            $messsage['message'] = "An error occured!";
+            $message['error'] = true;
+            $message['message'] = "An error occured!";
 
             $response->write(json_encode($message));
 
@@ -57,8 +57,8 @@ $app->post('/createuser', function(Request $request,Response $response){
         }else if($result == USER_EXISTS) {
 
             $message = array();
-            $message['error'] = false;
-            $messsage['message'] = "User already exists!";
+            $message['error'] = true;
+            $message['message'] = "User already exists!";
 
             $response->write(json_encode($message));
 
