@@ -11,6 +11,13 @@ $app = new \Slim\App([
     ]
 ]);
 
+$app->add(new Tuupola\Middleware\HttpBasicAuthentication([
+    "secure"=> false,
+    "users" => [
+        "user" => "test",
+    ]
+]));
+
 /*
 endpoint: createuser
 parameters: email,password,name,school
@@ -18,7 +25,7 @@ method: POST
 */
 
 $app->post('/createuser', function(Request $request,Response $response){
-    if(haveEmptyParameters(array('email','password','name','school'), $request, $response)){
+    if(!haveEmptyParameters(array('email','password','name','school'), $request, $response)){
         $request_data = $request->getParsedBody();
 
         $email = $request_data['email'];
@@ -63,7 +70,7 @@ $app->post('/createuser', function(Request $request,Response $response){
             $response->write(json_encode($message));
 
             return $response->withHeader("Content-Type","application/json")
-            ->withStatus(201);
+            ->withStatus(422);
 
         }
     }
